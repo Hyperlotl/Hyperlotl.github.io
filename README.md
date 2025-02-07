@@ -1,2 +1,0 @@
-# Hyperlotl.github.io
-Website
