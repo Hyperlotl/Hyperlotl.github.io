@@ -22,8 +22,8 @@ jobs:
             import requests
             import subprocess
 
-            # GitHub API URL to fetch all repositories for the user Axolotian-dev
-            GITHUB_API_URL = "https://api.github.com/users/Axolotian-dev/repos"
+            # GitHub API URL to fetch all repositories for the user Hyperlotl
+            GITHUB_API_URL = "https://api.github.com/users/Hyperlotl/repos"
             HEADERS = {
                 "Authorization": "token ${{ secrets.TOKEN_THING }}"
             }
@@ -57,7 +57,7 @@ jobs:
                     else:
                         print(f"No scan_data.json found in {repo_full_name}")
             else:
-                print("Failed to fetch repositories for Axolotian-dev. Status code:", response.status_code)
+                print("Failed to fetch repositories for Hyperlotl. Status code:", response.status_code)
 
             # Write the collected data to test.json (this overwrites any existing content)
             with open(json_file, "w") as f:
