@@ -1,6 +1,6 @@
 name: Update JSON file
 
-on: [push, workflow_dispatch]
+on: [workflow_dispatch]
 
 jobs:
   update_file:
