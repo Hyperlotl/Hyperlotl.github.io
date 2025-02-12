@@ -1,0 +1,11 @@
+{
+    "content1": {
+        "name": "gridmaps",
+        "description": "test",
+        "image_url": "https://raw.githubusercontent.com/Anuken/anuken.github.io/refs/heads/master/images/mindustry/2gif.gif"
+    },
+    "test": {
+        "test": "aaaaaaaa",
+        "test2": "bbbbbba"
+    }
+}
