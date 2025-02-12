@@ -1,0 +1,83 @@
+name: Update JSON file
+
+on: [push, workflow_dispatch]
+
+jobs:
+  update_file:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.TOKEN_THING }}
+
+      - name: Set up Git user
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+
+      - name: Scan user repos for scan_data.json and update JSON
+        run: |
+            import json
+            import requests
+            import subprocess
+
+            # GitHub API URL to fetch all repositories for the user Axolotian-dev
+            GITHUB_API_URL = "https://api.github.com/users/Axolotian-dev/repos"
+            HEADERS = {
+                "Authorization": "token ${{ secrets.TOKEN_THING }}"
+            }
+
+            # Define the output JSON file
+            json_file = "test.json"
+            # Start with an empty dictionary (default list is empty)
+            new_data = {}
+
+            # Fetch the user's repositories
+            response = requests.get(GITHUB_API_URL, headers=HEADERS)
+            if response.status_code == 200:
+                repos = response.json()
+                for repo in repos:
+                    repo_full_name = repo["full_name"]
+                    default_branch = repo.get("default_branch", "main")
+                    # Construct URL for scan_data.json from the repository's default branch
+                    scan_data_url = f"https://raw.githubusercontent.com/{repo_full_name}/{default_branch}/scan_data.json"
+                    
+                    scan_response = requests.get(scan_data_url, headers=HEADERS)
+                    if scan_response.status_code == 200:
+                        try:
+                            scan_data = json.loads(scan_response.text)
+                            # Handle unexpected structures by logging the data
+                            if isinstance(scan_data, dict):  # Make sure it's a dictionary at the top level
+                                new_data.update(scan_data)
+                            else:
+                                print(f"Warning: {repo_full_name} scan_data.json is not a dictionary. Skipping.")
+                        except json.JSONDecodeError:
+                            print(f"Invalid JSON in {repo_full_name}/scan_data.json")
+                    else:
+                        print(f"No scan_data.json found in {repo_full_name}")
+            else:
+                print("Failed to fetch repositories for Axolotian-dev. Status code:", response.status_code)
+
+            # Write the collected data to test.json (this overwrites any existing content)
+            with open(json_file, "w") as f:
+                json.dump(new_data, f, indent=4)
+
+            # Git commit and push changes
+            subprocess.run(["git", "add", json_file])
+            commit_result = subprocess.run(["git", "commit", "-m", "Update JSON file"])
+            if commit_result.returncode == 0:
+                subprocess.run(["git", "push"])
+            else:
+                print("No changes to commit.")
+        shell: python
+
+      - name: Commit and push changes
+        run: |
+          git add test.json
+          if ! git diff-index --quiet HEAD --; then
+            git commit -m "Updated JSON"
+            git push https://Axolotian-dev:${{ secrets.TOKEN_THING }}@github.com/${{ github.repository }}.git
+          else
+            echo "No changes to commit."
+          fi
