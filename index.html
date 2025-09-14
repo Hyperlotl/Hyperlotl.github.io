@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hyperlotl Website</title>
+
+  <!-- ========== CSS (Styling) ========== -->
+  <style>
+    *{
+      padding: 0px 0px;
+      font-size: 20px;
+      margin:10px 10px;
+    }
+    #aboutme a {
+      margin: 0px 0px;
+    }
+    body {
+      padding: 20px;
+      text-align: left;
+      font-family: sans-serif;
+      font-family: sans-serif;
+      background-color: white;
+      color: #333;
+    }
+    #categories button,#project_info button{
+      width: 15%;
+      background: #e6f7ff;
+      border: 1px solid #91d5ff;
+      border-radius: 9999px;
+      text-align: left;
+      padding: 5px 0px;
+    }
+    button {
+      background: white;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+    }
+    button:focus {
+      outline: none;            /* no outline on focus */
+    }
+    h1 {
+      font-size: 2em;
+      color: #2c3e50;
+    }
+    /* Add more styles here */
+  </style>
+</head>
+<body>
+
+  <!-- ========== HTML (Structure) ========== -->
+  <div id="aboutme_container">
+  <h1>Hyperlotl's Website</h1>
+  <h2>Information about the Axolotl:</h2>
+  <p id="about_me">Hi! I'm Hyperlotl, an axolotl researcher who plummeted from the stars with a spark of innovation and a torrent of unadulterated CHAOS.<br>An engineer of code, complexities, and improbable contraptions, I fling myself at the edges of reason, bending deadlines and my sanity to force my wildest ideas into existence! Well… as much as my skills permit, anyhow.<br>My aim is to share my various adventures with you—exploring ideas, experimenting with projects, and uncovering the quirks of the world as I go.<br>I am also a huge fan of Vocaloids, particularly Hatsune Miku and Kasane Teto, and proudly claim the title of #1 Futurama fan.</p>
+  <hr>
+  <h2 id="title"></h2>
+  </div>
+  <div id="categories"></div>
+  <div id="project_list"></div>
+  <div id="project_info"></div>
+  <!-- ========== JavaScript (Behavior) ========== -->
+  <script src="script.js"></script>
+  <script>
+    // Inline JS can complement the external script
+    const p = document.getElementById("aboutme")
+    p.innerHTML = p.innerHTML.replace("various adventures", '<a href="https://example.com/adventures" target="_blank">various adventures</a>');
+  </script>
+</body>
+</html>

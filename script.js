@@ -1,0 +1,146 @@
+
+let project_list = [];
+const interface_category_list = document.getElementById("categories");
+const interface_project_list = document.getElementById("project_list");
+const interface_project_info = document.getElementById("project_info");
+const interface_header = document.getElementById("title");
+const categories = {
+  "misc tools/programs": "tools",
+  "scratch extensions": "ext",
+  "games": "games",
+  "libraries": "python",
+};
+const empty_message = document.createElement("p")
+empty_message.textContent="nothing here"
+//function to get all projects and store it in an array(returns the array)
+function getProjects() {
+  const projects = []
+  const url = "https://api.github.com/users/Hyperlotl/repos";
+  fetch(url)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`GitHub API error: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(repos => {
+      repos.forEach(repo => {
+        const scanURL = `https://raw.githubusercontent.com/Hyperlotl/${repo.name}/refs/heads/main/scan_data.json`;
+        fetch(scanURL)
+          .then(scanResponse => {
+            if (!scanResponse.ok) {
+              // skip silently if file not found
+              return;
+            }
+            return scanResponse.json();
+          })
+          .then(scanData => {
+            if (scanData) {
+              let project = {
+                name:scanData.name,
+                tag:scanData.tag,
+                description:scanData.description,
+                link:scanData.link
+              };
+              if (scanData.image_url) {
+                project.image_url = scanData.image_url;
+              };
+              projects.push(project);
+            }
+          })
+          .catch(() => {
+            // silently skip any fetch/json error
+          });
+      });
+    })
+    .catch(error => {
+      console.error("Error fetching repo list:", error.message);
+    });
+  return(projects);
+}
+//function to add buttons for all the categories
+function Categories() {
+  interface_category_list.innerHTML = "";
+  interface_project_list.innerHTML = "";
+  interface_project_info.innerHTML = "";
+  interface_header.textContent = "My projects"
+  for (const [name, tag] of Object.entries(categories)) {
+    let button = document.createElement("button");
+    button.textContent = name;
+    const categoryTag = tag;
+    button.addEventListener('click', () => {
+      GetTagged(categoryTag);
+    });
+    interface_category_list.appendChild(button);
+  }
+}
+//function that returns all projects with a certain tag
+function GetTagged(tag) {
+  if (project_list) {
+    interface_project_list.innerHTML="";
+    project_list.forEach(project_item => {
+      if (project_item.tag==tag) {
+        interface_project_list.appendChild(createProjectButton(project_item));
+        interface_project_list.appendChild(document.createElement('br'));
+      }
+    });
+    if (interface_project_list.innerHTML == "") {
+      console.log("inner HTML empty, adding empty message")
+      interface_project_list.appendChild(empty_message)
+    }
+  }
+}
+//function that creates an info page for any project
+function CreateProjectPage(project_name,project_description,project_link) {
+  //clear the text of everything
+  interface_category_list.innerHTML = "";
+  interface_project_list.innerHTML = "";
+  //header
+  interface_header.textContent=project_name;
+  //back button
+  let button = document.createElement("button");
+  button.textContent = "back";
+  button.addEventListener('click', () => {
+    Categories();
+  });
+  interface_project_info.appendChild(button)
+  interface_project_info.appendChild(
+    Object.assign(document.createElement("br"), {
+    })
+  );
+  //description
+  interface_project_info.appendChild(
+    Object.assign(document.createElement("p"), {
+        textContent: project_description,
+    })
+  );
+
+  //link to project
+  interface_project_info.appendChild(
+    Object.assign(document.createElement("a"), {
+        href: project_link,
+        textContent: "link to project page",
+        target: "_blank" // optional: opens in new tab
+    })
+  );
+}
+//function that creates a button for any project which links to the info page
+function createProjectButton(project) {
+  let button = document.createElement("button");
+  button.textContent = project.name;
+  button.project_name = project.name;
+  button.project_description = project.description;
+  button.project_link = project.link;
+  button.addEventListener('click', () => {
+    console.log('Button clicked:', button.name);
+    CreateProjectPage(button.project_name,button.project_description,button.project_link)
+  });
+  return button
+}
+window.onload = function() {
+  project_list = getProjects();
+  console.log(project_list);
+  Categories();
+  console.log("Page fully loaded!");
+
+};
