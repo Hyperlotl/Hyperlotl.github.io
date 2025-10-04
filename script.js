@@ -1,4 +1,5 @@
 
+
 let project_list = [];
 const interface_category_list = document.getElementById("categories");
 const interface_project_list = document.getElementById("project_list");
@@ -90,40 +91,46 @@ function GetTagged(tag) {
     }
   }
 }
-//function that creates an info page for any project
-function CreateProjectPage(project_name,project_description,project_link) {
-  //clear the text of everything
+//function that create an info page for any project
+async function CreateProjectPage(project_name, project_description, project_link) {
   interface_category_list.innerHTML = "";
   interface_project_list.innerHTML = "";
-  //header
-  interface_header.textContent=project_name;
-  //back button
-  let button = document.createElement("button");
-  button.textContent = "back";
-  button.addEventListener('click', () => {
+  interface_project_info.innerHTML = "";
+  interface_header.textContent = project_name;
+
+  // back button
+  let backButton = document.createElement("button");
+  backButton.textContent = "back";
+  backButton.addEventListener('click', () => {
     Categories();
   });
-  interface_project_info.appendChild(button)
-  interface_project_info.appendChild(
-    Object.assign(document.createElement("br"), {
-    })
-  );
-  //description
-  interface_project_info.appendChild(
-    Object.assign(document.createElement("p"), {
-        textContent: project_description,
-    })
-  );
+  interface_project_info.appendChild(backButton);
+  interface_project_info.appendChild(document.createElement("br"));
 
-  //link to project
-  interface_project_info.appendChild(
-    Object.assign(document.createElement("a"), {
-        href: project_link,
-        textContent: "link to project page",
-        target: "_blank" // optional: opens in new tab
-    })
-  );
+  // description(fetches README)
+  try {
+    const resp = await fetch(`https://raw.githubusercontent.com/Hyperlotl/${project_name}/main/README.md`);
+    if (resp.ok) {
+      const mdText = await resp.text();
+      const container = document.createElement("div");
+      container.innerHTML = DOMPurify.sanitize(marked.parse(mdText));
+      interface_project_info.appendChild(container);
+    } else {
+      console.warn("No README for", project_name);
+    }
+  } catch (err) {
+    console.warn("Error fetching README for", project_name, err);
+  }
+
+  // link to project
+  const link = document.createElement("a");
+  link.href = project_link;
+  link.textContent = "link to project page";
+  link.target = "_blank";
+  interface_project_info.appendChild(link);
 }
+
+
 //function that creates a button for any project which links to the info page
 function createProjectButton(project) {
   let button = document.createElement("button");
