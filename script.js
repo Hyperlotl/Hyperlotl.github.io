@@ -92,7 +92,7 @@ function GetTagged(tag) {
   }
 }
 //function that create an info page for any project
-async function CreateProjectPage(project_name, project_description, project_link) {
+async function CreateProjectPage(project_name, project_description, project_link, project_type) {
   interface_category_list.innerHTML = "";
   interface_project_list.innerHTML = "";
   interface_project_info.innerHTML = "";
@@ -105,6 +105,15 @@ async function CreateProjectPage(project_name, project_description, project_link
     Categories();
   });
   interface_project_info.appendChild(backButton);
+  if (project_type == "ext") {
+    let copyExtensionButton = document.createElement("button");
+    copyExtensionButton.textContent = "copy extension JS to clipboard"
+    copyExtensionButton.style.width = "40%"
+    copyExtensionButton.addEventListener('click', () => {
+      Copy_ext_to_clipboard(project_name);
+    })
+    interface_project_info.appendChild(copyExtensionButton);
+  }
   interface_project_info.appendChild(document.createElement("br"));
 
   // description(fetches README)
@@ -129,7 +138,21 @@ async function CreateProjectPage(project_name, project_description, project_link
   link.target = "_blank";
   interface_project_info.appendChild(link);
 }
-
+async function Copy_ext_to_clipboard (project_name) {
+  try {
+    const ext_resp = await fetch(`https://raw.githubusercontent.com/Hyperlotl/${project_name}/main/extension.js`);
+    if (ext_resp.ok) {
+      const extension = await ext_resp.text()
+      navigator.clipboard.writeText(extension)
+        .then(() => console.log("Copied to clipboard"))
+        .catch(err => console.error("Clipboard failed:", err));
+    } else {
+      console.warn("No extension.js for", project_name);
+    }
+  } catch (err) {
+    console.warn("Error fetching extension.js for", project_name, err);
+  }
+}
 
 //function that creates a button for any project which links to the info page
 function createProjectButton(project) {
@@ -138,9 +161,10 @@ function createProjectButton(project) {
   button.project_name = project.name;
   button.project_description = project.description;
   button.project_link = project.link;
+  button.project_tag = project.tag
   button.addEventListener('click', () => {
     console.log('Button clicked:', button.name);
-    CreateProjectPage(button.project_name,button.project_description,button.project_link)
+    CreateProjectPage(button.project_name,button.project_description,button.project_link,project.tag)
   });
   return button
 }
