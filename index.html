@@ -4,8 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Hyperlotl(The one with the website)</title>
-
-  <!-- ========== CSS (Styling) ========== -->
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   <style>
     *{
       padding: 0px 0px;
@@ -18,8 +17,7 @@
     body {
       padding: 20px;
       text-align: left;
-      font-family: sans-serif;
-      font-family: sans-serif;
+      font-family: "exo 2";
       background-color: white;
       color: #333;
     }
@@ -31,14 +29,27 @@
       display: inline-flex;
       justify-content: center;
       align-items: center;
+      
     }
-    #categories button,#project_info button,#pages button{
+    .c button{
       width: 230px;
-      background: #e6f7ff;
-      border-color: #91d5ff;
+      font-family: "exo 2";
       border-radius: 9999px;
       text-align: right;
       padding: 5px 0px;
+      border-radius: 9999px;
+      border: 5px solid transparent;
+      cursor: pointer;
+      color: black;
+      align-items: center;
+      font-weight: bold;
+      background:
+        linear-gradient(#f3b7ef, #f3b7ef) padding-box,
+        linear-gradient(22deg, #5865F2, #FF00FF) border-box;
+    }
+    .c button:hover{
+      box-shadow: 0 0 8px rgba(255, 0, 255, 0.5);
+      
     }
     #project_info div{
       padding: 0px 0px;
@@ -69,13 +80,10 @@
     #links_container{
       margin: 0px 0px;
     }
-    /* Add more styles here */
   </style>
 </head>
 <body>
-
-  <!-- ========== HTML (Structure) ========== -->
-  <div id="pages"></div>
+  <div id="pages" class="c"></div>
   <div id="aboutme_container", class="staticPage">
   <h1>Hyperlotl's Website</h1>
   <h2>Information about the Axolotl:</h2>
@@ -88,10 +96,9 @@
   <hr>
   <h2 id="title"></h2>
   </div>
-  <div id="categories"></div>
+  <div id="categories" class="c"></div>
   <div id="project_list"></div>
-  <div id="project_info"></div>
-  <!-- ========== JavaScript (Behavior) ========== -->
+  <div id="project_info" class="c"></div>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js"></script>
   <script src="script.js"></script>
