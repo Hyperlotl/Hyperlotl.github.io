@@ -13,7 +13,7 @@ const categories = {
 };
 function updateMainPage(){
   const params = new URLSearchParams(window.location.search)
-  const pt = params.get("pt") || "normal";
+  const pt = params.get("pt") || "staticPage";
   if (pt=="pjl") {
     const tag=params.get("tag") || "ext"
     GetTagged(tag)
