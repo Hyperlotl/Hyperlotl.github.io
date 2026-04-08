@@ -1,7 +1,7 @@
 
 
 let project_list = [];
-const interface_category_list = document.getElementById("categories");
+const interface_category_list = document.getElementById("pages");
 const interface_project_list = document.getElementById("project_list");
 const interface_project_info = document.getElementById("project_info");
 const interface_header = document.getElementById("title");
@@ -11,8 +11,41 @@ const categories = {
   "games": "games",
   "libraries": "python",
 };
+function updateMainPage(){
+  const params = new URLSearchParams(window.location.search)
+  const pt = params.get("pt") || "normal";
+  if (pt=="pjl") {
+    const tag=params.get("tag") || "ext"
+    GetTagged(tag)
+  }
+  //hide all pages
+  document.querySelectorAll(".staticPage").forEach(el=>{
+    el.style.display="none"
+  })
+  if (pt == "staticPage") {
+    const currentPage=params.get("pID") || "aboutme_container"
+    const selectedPage=document.getElementById(currentPage);
+    selectedPage.style.display="block"
+  }
+}
 const empty_message = document.createElement("p")
 empty_message.textContent="nothing here"
+//function to set search param
+function setParams(values) {//expects a list of {"param","value"} objects
+  window.history.pushState({}, "", window.location.pathname);//clear previous search params first
+  for (let i = 0; i < values.length; i++) {
+    const params = new URLSearchParams(window.location.search);
+    const p = values[i]
+    params.set(p["p"],p["v"]); // change or add
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.pushState({}, "", newUrl);
+  }
+  updateMainPage()
+}
+
+window.addEventListener("popstate", () => {
+  updateMainPage();
+});
 //function to get all projects and store it in an array(returns the array)
 function getProjects() {
   const projects = []
@@ -65,12 +98,24 @@ function Categories() {
   interface_project_list.innerHTML = "";
   interface_project_info.innerHTML = "";
   interface_header.textContent = "My projects"
+  let hb = document.createElement("button");
+  hb.textContent = "homepage";
+  hb.addEventListener('click', () => {
+    setParams([
+      {"p":"pt","v":"staticPage"},
+      {"p":"pID","v":"aboutme_container"}
+    ])
+  });
+   interface_category_list.appendChild(hb);
   for (const [name, tag] of Object.entries(categories)) {
     let button = document.createElement("button");
     button.textContent = name;
     const categoryTag = tag;
     button.addEventListener('click', () => {
-      GetTagged(categoryTag);
+      setParams([
+        {"p":"pt","v":"pjl"},
+        {"p":"tag","v":categoryTag}
+      ])
     });
     interface_category_list.appendChild(button);
   }
@@ -93,6 +138,9 @@ function GetTagged(tag) {
 }
 //function that create an info page for any project
 async function CreateProjectPage(project_name, project_description, project_link, project_type) {
+  setParams([
+    {"p":"pt","v":"infopage"}
+  ])
   interface_category_list.innerHTML = "";
   interface_project_list.innerHTML = "";
   interface_project_info.innerHTML = "";
@@ -103,6 +151,9 @@ async function CreateProjectPage(project_name, project_description, project_link
   backButton.textContent = "back";
   backButton.addEventListener('click', () => {
     Categories();
+    setParams([
+      {"p":"pt","v":"staticPage"}
+    ])
   });
   interface_project_info.appendChild(backButton);
   if (project_type == "ext") {
@@ -172,6 +223,10 @@ window.onload = function() {
   project_list = getProjects();
   console.log(project_list);
   Categories();
+  setParams([
+    {"p":"pt","v":"staticPage"}
+  ])
   console.log("Page fully loaded!");
+
 
 };
