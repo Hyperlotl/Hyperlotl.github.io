@@ -19,9 +19,12 @@ function updateMainPage(){
     GetTagged(tag)
   }
   //hide all pages
-  document.querySelectorAll(".staticPage").forEach(el=>{
+  document.querySelectorAll(".content").forEach(el=>{
     el.style.display="none"
   })
+  if (pt != "pjl"){
+    interface_project_list.innerHTML = "";
+  }
   if (pt == "staticPage") {
     const currentPage=params.get("pID") || "aboutme_container"
     const selectedPage=document.getElementById(currentPage);
@@ -122,6 +125,7 @@ function Categories() {
 }
 //function that returns all projects with a certain tag
 function GetTagged(tag) {
+  interface_project_list.style.display="block"
   if (project_list) {
     interface_project_list.innerHTML="";
     project_list.forEach(project_item => {
